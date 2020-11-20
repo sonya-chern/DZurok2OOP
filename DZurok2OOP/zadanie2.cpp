@@ -142,7 +142,7 @@ int main() {
 				}
 			} while (A == 1);
 		}
-			  break;
+		break;
 		case 4: {
 			for (i = 0; i < sizeBook; i++) {
 				cout << i + 1 << " "; PhoneBook[i].Print(); cout << endl;
@@ -152,6 +152,7 @@ int main() {
 				cin >> A; 	cin.ignore(32767, '\n');
 			} while (A != 0);
 		}
+		break;
 		default: cout << "Всего доброго!";
 			break;
 		}

@@ -6,8 +6,8 @@ using namespace std;
 char n[255]{ 0 };
 char O[255]{ 0 };
 uint64_t m{ 0 }, of{ 0 }, h{ 0 };
-int sizeBook = 1;
-int Indik, A, i, indx = 0;
+const int sizeBook = 10;
+int Indik, A;
 class Abonent {
 	int sizeName;
 	int sizeOtherInfo;
@@ -17,8 +17,8 @@ class Abonent {
 	uint64_t homePh;
 	char* otherInfo;
 public:
-	Abonent(const char* n, uint64_t m, uint64_t of, uint64_t h, const char* O) : sizeName{ 0 }, sizeOtherInfo { 0 }, Name{ n ? new char[strlen(n) + 1] : nullptr }, mobPh{ m }, officePh{ of },
-																				homePh{ h }, otherInfo{ O ? new char[strlen(O) + 1] : nullptr }	{}
+	/*Abonent(const char* n, uint64_t m, uint64_t of, uint64_t h, const char* O) : sizeName{(int) strlen(n) + 1 }, sizeOtherInfo { (int)strlen(O) + 1 }, Name{ n ? new char[(int)strlen(n) + 1] : nullptr }, mobPh{ m }, officePh{ of },
+																			homePh{ h }, otherInfo{ O ? new char[(int)strlen(O) + 1] : nullptr }	{}*/
 	Abonent() { sizeName = 0; sizeOtherInfo = 0; Name = nullptr; mobPh = 0; officePh = 0; homePh = 0; otherInfo = nullptr; }
 	Abonent& operator = (const Abonent& otherAbonent) {   // преобразование в конструктор копирования не работает
 		this->sizeName = otherAbonent.sizeName;
@@ -32,39 +32,67 @@ public:
 		strcpy(otherInfo, otherAbonent.otherInfo);
 		return *this;
 	}
+
 	void SetName (const char* n) {
 		sizeName = (int)strlen(n) + 1;
 		Name = new char[sizeName];
 		strcpy(Name, n);
 	}
+	char* GetName() {
+		return Name;
+	}
 	void SetMobPh(uint64_t m) {
 		mobPh = m;
+	}
+	uint64_t GetMobPh() {
+		return mobPh;
 	}
 	void SetOfficePh(uint64_t of) {
 		officePh = of;
 	}
+	uint64_t GetOfficePh() {
+		return officePh;
+	}
 	void SetHomePh(uint64_t h) {
 		homePh = h;
+	}
+	uint64_t GetHomePh() {
+		return homePh;
 	}
 	void SetOtherInf(const char* O) {
 		sizeOtherInfo = (int)strlen(O) + 1;
 		otherInfo = new char[sizeOtherInfo];
 		strcpy(otherInfo, O);
 	}
+	char* GetOtherInf() {
+		return otherInfo;
+	}
 	int SerchByName(const char* otherName) {
 		return _stricmp(Name, otherName);
 	}
-	inline void Print() {
-		if (Name) cout << "Контакт: " << Name << endl;
+	void Print() {
+		if (Name) {
+			cout << "Контакт: ";
+			for (int i = 0; i < sizeName; i++)	{	cout << Name[i];	}
+				cout << endl;
+		}
 		else { cout << "Нет имени" << endl; }
-		cout << "Мобильный телефон: " << mobPh << endl << "Рабочий телефон: " << officePh << endl;
-		cout << "Домашний телефон: " << homePh << endl << "Дополнительная информация о контакте: " << otherInfo << endl;
+		cout << "Мобильный телефон: " << mobPh << endl;
+		cout << "Рабочий телефон: " << officePh << endl;
+		cout << "Домашний телефон: " << homePh << endl;
+		if (otherInfo) {
+			cout << "Дополнительная информация о контакте: ";
+			for (int i = 0; i < sizeOtherInfo; i++) { cout << otherInfo[i]; }
+			cout << endl;
+		}
+		else { cout << "Нет информации" << endl; }
 	}
 		~Abonent() { delete[] Name; delete[] otherInfo;	}
 };
-Abonent* PhoneBook = new Abonent[sizeBook];
+Abonent PhoneBook[sizeBook];
 int main() {
 	setlocale(LC_ALL, "");
+	int ind = 0;
 	cout << "Приветствую! Выберете действие: " << endl;
 	do {
 		cout << "1 - добавить контакт" << endl << "2 - удалить контакт" << endl << "3 - искать контакт по ФИО" << endl;
@@ -78,50 +106,53 @@ int main() {
 				cin >> A; cin.ignore(32767, '\n');
 				system("cls");
 				if (A == 1) {
+					
 					cout << "Введите имя, фамилию и отчество контакта: "; 	gets_s(n);
-					PhoneBook[indx].SetName(n);
+					PhoneBook[ind].SetName(n);
 					cout << "Мобильный телефон: "; 							cin >> m; cin.ignore(32767, '\n');
-					PhoneBook[indx].SetMobPh(m);
+					PhoneBook[ind].SetMobPh(m);
 					cout << "Рабочий телефон: ";							cin >> of; cin.ignore(32767, '\n');
-					PhoneBook[indx].SetOfficePh(of);
+					PhoneBook[ind].SetOfficePh(of);
 					cout << "Домашний телефон: ";							cin >> h; cin.ignore(32767, '\n');
-					PhoneBook[indx].SetHomePh(h);
+					PhoneBook[ind].SetHomePh(h);
 					cout << "Дополнительную информацию об абоненте: ";		gets_s(O);
-					PhoneBook[indx].SetOtherInf(O);
-					//PhoneBook[indx].Print();
-					sizeBook++; indx++;
+					PhoneBook[ind].SetOtherInf(O);
+					PhoneBook[ind].Print();
+					ind++;
+					//sizeBook++;
 				}
 			} while (A == 1);
-			sizeBook--; indx--;
+			//sizeBook--;
 		}
 		break;
 		case 2: { 
 			cout << "Какой контакт удалить? Выберете номер" << endl << "Нажмите 0 для возврата в предыдущее меню" << endl;
-			for (i = 0; i < sizeBook; i++) {
-				cout << i + 1 << " "; PhoneBook[i].Print(); cout << endl;
+			for (int i = 0; i < sizeBook; i++) {
+				cout << i + 1 << " "; 
+				PhoneBook[i].Print(); cout << endl;
 			}
 			cin >> A; cin.ignore(32767, '\n');
-			if (A > 0 || A <= i + 1) {
-				if (sizeBook == 1) { 
-					Abonent* New_PhoneBook = new Abonent[sizeBook];
-					New_PhoneBook[0];
-					delete[] PhoneBook;
-					PhoneBook = New_PhoneBook;
-				}
-				else {
-					--sizeBook;
-					Abonent* New_PhoneBook = new Abonent[sizeBook];
-					i = 0;
-					for (int j = 0; j <= sizeBook; j++) {
-						if (j == A-1) { continue; }
-						else {
-							New_PhoneBook[i] = PhoneBook[j];
-							i++;
-						}
-					}
-					delete[] PhoneBook; 
-					PhoneBook = New_PhoneBook; // на данном этапе вызывается деструктор, почему?
-				}
+			if (A > 0 || A <= sizeBook) {
+				//if (sizeBook == 1) { 
+				//	Abonent* New_PhoneBook = new Abonent[sizeBook];
+				//	New_PhoneBook[0];
+				//	delete[] PhoneBook;
+				//	PhoneBook = New_PhoneBook;
+				//}
+				//else {
+				//	--sizeBook;
+				//	Abonent* New_PhoneBook = new Abonent[sizeBook];
+				//	int z = 0;
+				//	for (int j = 0; j <= sizeBook; j++) {
+				//		if (j == A-1) { continue; }
+				//		else {
+				//			New_PhoneBook[z] = PhoneBook[j];
+				//			z++;
+				//		}
+				//	}
+				//	delete[] PhoneBook; 
+				//	PhoneBook = New_PhoneBook; // на данном этапе вызывается деструктор, почему?
+				//}
 
 			}
 		}
@@ -134,7 +165,7 @@ int main() {
 				system("cls");
 				if (A == 1) {
 					cout << "Введите имя, фамилию и отчество контакта: "; 	gets_s(n);
-					for (i = 0; i < sizeBook; i++) {
+					for (int i = 0; i < ind; i++) {
 						int serch = PhoneBook[i].SerchByName(n);
 						if (serch) continue;
 						else PhoneBook[i].Print();
@@ -144,8 +175,9 @@ int main() {
 		}
 		break;
 		case 4: {
-			for (i = 0; i < sizeBook; i++) {
-				cout << i + 1 << " "; PhoneBook[i].Print(); cout << endl;
+			for (int i = 0; i < ind; i++) {
+				cout << i + 1 << " "; 
+				PhoneBook[i].Print(); cout << endl;
 			}
 			do {
 				cout << "Нажмите 0 для возврата в предыдущее меню" << endl;
@@ -156,7 +188,7 @@ int main() {
 		default: cout << "Всего доброго!";
 			break;
 		}
-	} while (Indik>0 && Indik<4);
-	delete[] PhoneBook;
+	} while (Indik>0 && Indik<5);
+	//delete[] PhoneBook;
 	return 0;
 }
